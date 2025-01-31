@@ -2,24 +2,26 @@
 <html>
 <head>
     <title>OAuth Callback</title>
+    <script>
+        window.onload = function () {
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            const accessToken = params.get('access_token');
+            const error = params.get('error');
+
+            if (window.opener) {
+                window.opener.postMessage({
+                    type: 'oauth2-response',
+                    access_token: accessToken,
+                    error: error
+                }, window.opener.location.origin);
+                
+                window.close();
+            }
+        };
+    </script>
 </head>
 <body>
-    <script>
-        // Parse the access token from the URL hash
-        const hash = window.location.hash.substring(1);
-        const params = new URLSearchParams(hash);
-        
-        // Send the token back to the opener window
-        if (window.opener) {
-            window.opener.postMessage(
-                {
-                    type: 'oauth2-response',
-                    access_token: params.get('access_token'),
-                    error: params.get('error')
-                },
-                window.opener.location.origin
-            );
-        }
-    </script>
+    <p>Authenticating...</p>
 </body>
 </html>
